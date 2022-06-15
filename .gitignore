@@ -1,0 +1,5 @@
+/profile/*
+*.session
+/__pycache__/
+/downloads/*
+/venv/
