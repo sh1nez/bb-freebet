@@ -6,8 +6,8 @@ import random
 import time
 
 options = webdriver.ChromeOptions()
-# options.add_argument("--headless=new")
-options.add_argument("start-maximized")
+options.add_argument("--headless=new")
+# options.add_argument("start-maximized")
 
 chrome_profile_path = "/home/sad1/git/freebet/profile"
 options.add_argument(f"user-data-dir={chrome_profile_path}")
