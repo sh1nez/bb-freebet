@@ -5,10 +5,13 @@ import socket
 import sys
 import random
 import time
+import logging
 
 options = webdriver.ChromeOptions()
-options.add_argument("--headless=new")
-# options.add_argument("start-maximized")
+# options.add_argument("--headless=new")
+options.add_argument("start-maximized")
+
+logger = logging.getLogger('freebet')
 
 chrome_profile_path = sys.argv[1]
 port = int(sys.argv[2])
@@ -33,6 +36,8 @@ driver.get("https://betboom.ru/actions#online")
 driver.find_element(By.TAG_NAME, "body").send_keys(
     webdriver.common.keys.Keys.END)
 
+logger.warning("start!")
+
 
 def promo(code):
     driver.find_element(By.ID, 'promocode').send_keys(code)
@@ -43,13 +48,16 @@ def promo(code):
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("localhost", port))
+logger.warning(f"bind to {port}")
 
 data = b''
 while True:
     buffer, addr = sock.recvfrom(1024)
     data += buffer
+    logger.warning(f"accept data: {buffer.decode("utf-8")}")
     if b'<END>' in data:
         messages = data.split(b'<END>')
         for i in messages[:-1]:
+            logger.warning(f"using promo {i.decode()}")
             promo(i.decode("utf-8"))
         data = messages[-1]

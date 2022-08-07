@@ -14,8 +14,8 @@ logging.basicConfig(
     level=logging.WARNING,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler()  # Вывод в консоль
-        # logging.FileHandler('log.txt'),
+        # logging.StreamHandler()  # Вывод в консоль
+        logging.FileHandler('log.txt'),
     ]
 )
 
@@ -30,6 +30,7 @@ name_cnt = 0
 
 clients = []
 
+logger.warning(sys.argv[1:])
 for i in sys.argv[1:]:
     clients.append(("localhost", int(i)))
 
