@@ -4,6 +4,7 @@ user=freebeter
 active_dir=/home/"$user"/bb-freebet
 client_dir="$active_dir"/profiles
 
+rm "$active_dir"/log*.txt
 # chown -R $user:$user "$active_dir"
 
 # clients=$(find "$client_dir" -maxdepth 1 -type d)

@@ -20,8 +20,9 @@ logging.basicConfig(
 )
 
 name = "freebet"
-
-app = Client(name)
+app_id = 21907547
+app_hash = "6f9ce40381033a9d9924430757cf6b07"
+app = Client(name, api_id = app_id, api_hash = app_hash)
 
 channels = ["-1001755139624", "-1001889498592",
             "-1001810104257", "-1001525747974", "-1001979310355"]
