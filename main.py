@@ -6,6 +6,7 @@ import sys
 import random
 import re
 import logging
+import string
 
 logger = logging.getLogger('freebet')
 
@@ -68,7 +69,7 @@ async def media_to_text(message: types.Message):
         await message.download(name)
         return to_text("downloads/" + name)
     except Exception:
-        pass
+        return []
 
 
 @app.on_message()
@@ -79,14 +80,14 @@ async def filter_messages(cli, message: types.Message):
     if message.__dict__["media"]:
         words = await media_to_text(message)
 
-    string = None
+    re_text = None
     if message.__dict__['text']:
         words.extend(message.text.split())
-        string = message.__dict__['text']
+        re_text = message.__dict__['text']
 
     if message.__dict__['caption']:
         words.extend(message.caption.split())
-        string = message.__dict__['caption']
+        re_text = message.__dict__['caption']
 
     new = []
     for i in words:
@@ -94,13 +95,20 @@ async def filter_messages(cli, message: types.Message):
             inx = i.find("PP")
             new.append(i[inx:10])
     words = new
+    for i in words:
+        if "*" in i:
+            if i.count("*") != 1:
+                continue
+            else:
+                for w in string.digits + string.ascii_uppercase:
+                    words.append(i.replace("*", w))
 
     if not words:
-        if not string:
+        if not re_text:
             return
         url_pattern = re.compile(r"https?://\S+")
-        string = url_pattern.sub("", string)
-        words = re.findall(r'\b[a-zA-Z0-9]{10,}\b', string)
+        re_text = url_pattern.sub("", re_text)
+        words = re.findall(r'\b[a-zA-Z0-9]{10,}\b', re_text)
         if words:
             logger.warning("using promo...")
             for i in words:
