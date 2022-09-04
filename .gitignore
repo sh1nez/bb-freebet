@@ -3,6 +3,6 @@
 *.session
 *.session-journal
 /__pycache__/
-/downloads/*
+/client/downloads/*
 /venv/
 log*.txt
