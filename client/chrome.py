@@ -29,7 +29,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
-        logging.FileHandler(f'log{chrome_profile_path.split("/")[-1]}.txt'),
+        logging.FileHandler(f'log.txt'),
     ]
 )
 
