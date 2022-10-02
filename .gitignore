@@ -1,5 +1,6 @@
 /profile/*
 /profiles/*
+/downloads/*
 *.session
 *.session-journal
 /__pycache__/
