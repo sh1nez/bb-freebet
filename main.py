@@ -137,7 +137,9 @@ async def filter_messages(cli, message: types.Message):
     if any("*" in i for i in words):
         hint = find_hint(text)
         words = replace(words, hint)
-    many_clients(i)
+
+    for i in words:
+        many_clients(i)
 
 
 logger.warning("start!")
