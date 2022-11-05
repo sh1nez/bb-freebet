@@ -79,11 +79,12 @@ def find_hint(text):
 
 
 def replace(words, hint=None):
+    new = []
     if hint:
-        for i, v in enumerate(words):
-            words[i] = re.sub(r'\*+', hint, v)
+        for v in enumerate(words):
+            new.append(re.sub(r'\*+', hint, v))
+
     else:
-        new = []
         for i in words:
             if "*" in i:
                 if i.count("*") != 1:
@@ -91,7 +92,7 @@ def replace(words, hint=None):
                 else:
                     for w in string.digits + string.ascii_uppercase:
                         new.append(i.replace("*", w))
-        words = new
+    words = new
     return words
 
 
