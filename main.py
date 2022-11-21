@@ -73,11 +73,11 @@ async def media_to_text(message: types.Message):
 
 
 def find_hint(text):
-    matches = re.findall(r'"(.*?)"', text)
-    if len(matches) == 1:
-        logger.info(f"find hint {matches[0]}")
-        return matches[0]
-    return None
+    if text:
+        matches = re.findall(r'"(.*?)"', text)
+        if len(matches) == 1:
+            logger.info(f"find hint {matches[0]}")
+            return matches[0]
 
 
 def replace(words, hint=None):
@@ -86,7 +86,6 @@ def replace(words, hint=None):
     if hint:
         for v in words:
             new.append(re.sub(r'\*+', hint, v))
-
     else:
         for i in words:
             if "*" in i:
@@ -104,9 +103,8 @@ def replace(words, hint=None):
 async def filter_messages(cli, message: types.Message):
     if str(message.chat.id) not in channels:
         return
-    logger.info("get message")
+
     if message.__dict__["media"]:  # promi in pic
-        logger.info("image")
         words = await media_to_text(message)
         new = []
         for i in words:
@@ -120,7 +118,6 @@ async def filter_messages(cli, message: types.Message):
                 text = message.__dict__['caption']
                 hint = find_hint(text)
                 words = replace(words, hint)
-                logger.info(" ".join(words))
         many_promos(words)
 
     words = []
@@ -134,11 +131,7 @@ async def filter_messages(cli, message: types.Message):
     text = url_pattern.sub("", text)
     words = re.findall(r'PP.{8}', text)
 
-    logger.info("text: ")
-    logger.info("".join(words))
-
     if any("*" in i for i in words):
-        logger.info("* in text")
         hint = find_hint(text)
         words = replace(words, hint)
 
@@ -149,9 +142,6 @@ async def filter_messages(cli, message: types.Message):
     if any("*" in i for i in words):
         hint = find_hint(text)
         words = replace(words, hint)
-
-    logger.info("many-promo")
-    logger.info("".join(words))
 
     for i in words:
         many_clients(i)
