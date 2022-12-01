@@ -6,4 +6,4 @@ def to_text(image_path):
     print(command)
     result = subprocess.run(
         command, capture_output=True, text=True, shell=True)
-    return result.stdout.split("\n")
+    return result.stdout
