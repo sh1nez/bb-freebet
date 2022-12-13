@@ -118,14 +118,13 @@ async def filter_messages(cli, message: types.Message):
 
     url_pattern = re.compile(r"https?://\S+")
     text = url_pattern.sub("", text)
-    tag_pattern = re.compile(r'@\w+', text)
+    tag_pattern = re.compile(r'@\w+')
     text = tag_pattern.sub("", text)
 
     text += media_text
     words = re.findall(r'PP.{8}', text)
 
     if any("*" in i for i in words):
-        hint = find_hint(text)
         words = replace(words, hint)
 
     if len(words) >= 2:
@@ -134,7 +133,6 @@ async def filter_messages(cli, message: types.Message):
         words = []
         words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
         if any("*" in i for i in words):
-            hint = find_hint(text)
             words = replace(words, hint)
 
         for i in words:
