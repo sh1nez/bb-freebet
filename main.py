@@ -73,30 +73,36 @@ async def media_to_text(message: types.Message):
 
 
 def find_hints(text):
-    if text:
-        matches = re.findall(r'"(.*?)"', text)
-        if len(matches) == 1:
-            logger.info(f"find hint {matches[0]}")
-            return matches
-        matches = re.findall(r'\b[^* \n]+\b', text)
-        logger.info(f"find hints {matches}")
+    matches = re.findall(r'"([A-Z]+)"', text)
+
+    if len(matches) == 1:
+        logger.info(f"find hint {matches[0]}")
         return matches
 
+    matches = re.findall(r'\b[A-Z]+\b', text)
 
-def replace(words, hint=None):
+    if matches:
+        logger.info(f"find hint {''.join(matches)}")
+        return matches
+
+    return []
+
+
+def replace(words, hints=None):
     logger.info(f"replace start: {''.join(words)}")
     new = []
-    if hint:
-        for v in words:
-            new.append(re.sub(r'\*+', hint, v))
+    if hints:
+        for w in words:
+            for h in hints:
+                new.append(re.sub(r'\*+', h, w))
     else:
-        for i in words:
-            if "*" in i:
-                if i.count("*") != 1:
+        for h in words:
+            if "*" in h:
+                if h.count("*") != 1:
                     continue
                 else:
                     for w in string.digits + string.ascii_uppercase:
-                        new.append(i.replace("*", w))
+                        new.append(h.replace("*", w))
 
     logger.info(f"replace end: {''.join(new)}")
     return new
@@ -111,6 +117,7 @@ async def filter_messages(cli, message: types.Message):
     words = []
     if message.__dict__["media"]:  # promi in pic
         media_text += await media_to_text(message)
+
     if message.__dict__['text']:
         text += message.text
     if message.__dict__['caption']:
@@ -127,11 +134,7 @@ async def filter_messages(cli, message: types.Message):
     words = re.findall(r'PP.{8}', text)
 
     if any("*" in i for i in words):
-        new = []
-        for i in words:
-            for j in hints:
-                new.append(re.sub(r'\*+', j, i))
-        words = new
+        words = replace(words, hints)
 
     if len(words) >= 2:
         many_promos(words)
@@ -139,11 +142,7 @@ async def filter_messages(cli, message: types.Message):
         words = []
         words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
         if any("*" in i for i in words):
-            new = []
-            for i in words:
-                for j in hints:
-                    new.append(re.sub(r'\*+', j, i))
-            words = new
+            words = replace(words, hints)
 
         for i in words:
             many_clients(i)
