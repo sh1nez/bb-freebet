@@ -12,7 +12,7 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
@@ -134,19 +134,22 @@ async def filter_messages(cli, message: types.Message):
     words = re.findall(r'PP.{8}', text)
 
     if any("*" in i for i in words):
-        logging.info("PP broot")
+        logging.debug("PP broot")
         words = replace(words, hints)
 
     if len(words) >= 2:
+        logging.debug("many_promos")
         many_promos(words)
     else:
         words = []
         words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{4,}\b', text)
+        logging.debug(f"find {' '.join(words)}")
         if any("*" in i for i in words):
-            logging.info(f"broot with {''.join(hints)}")
+            logging.debug(f"broot with {''.join(hints)}")
             words = replace(words, hints)
 
         for i in words:
+            logging.debug("many_clients")
             many_clients(i)
 
 
