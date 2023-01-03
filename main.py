@@ -76,13 +76,13 @@ def find_hints(text):
     matches = re.findall(r'"([A-Z]+)"', text)
 
     if len(matches) == 1:
-        logger.info(f"find hint {matches[0]}")
+        logger.debug(f"find hint {matches[0]}")
         return matches
 
     matches = re.findall(r'\b[A-Z]+\b', text)
 
     if matches:
-        logger.info(f"find hints {''.join(matches)}")
+        logger.debug(f"find hints {' '.join(matches)}")
         return matches
 
     return []
@@ -143,7 +143,7 @@ async def filter_messages(cli, message: types.Message):
     else:
         words = []
         logging.debug(f"text {text}")
-        words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{4,}\b', text)
+        words = re.findall(r'(?!PP)[a-zA-Z0-9*]{5,}', text)
         logging.debug(f"words {words}")
         logging.debug(f"find {' '.join(words)}")
         if any("*" in i for i in words):
