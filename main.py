@@ -26,7 +26,7 @@ app_hash = "6f9ce40381033a9d9924430757cf6b07"
 app = Client(name, api_id=app_id, api_hash=app_hash)
 
 aunk = ["-1001979310355", "-1001810104257"]
-maxBet = ["-1001525747974",]
+maxBet = ["-1001525747974", "-1001525747974"]
 channels = ["-1001810104257", "-1001525747974",
             "-1001979310355", "-1001889498592",]
 
@@ -112,6 +112,7 @@ def replace(words, hints=None):
 
 @app.on_message()
 async def filter_messages(cli, message: types.Message):
+    print(message.text, message.chat.id)
     if str(message.chat.id) not in channels:
         return
     media_text = ""

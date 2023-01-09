@@ -22,7 +22,7 @@ options.add_argument("--remote-debugging-port=9222")
 
 port = int(open("socket.txt").readline())
 options.add_argument(f"user-data-dir=/home/USERNAME/bb-freebet/profile")
-# options.add_argument(f"user-data-dir=/home/sad1/git/bb-freebet/client/profile")
+# options.add_argument(f"user-data-dir=/home/2happy/git/bb-freebet/client/profile")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
 
@@ -54,9 +54,6 @@ stealth(driver,
 
 driver.get("https://betboom.ru/actions#online")
 
-driver.find_element(By.TAG_NAME, "body").send_keys(
-    webdriver.common.keys.Keys.END)
-
 logging.warning("start!")
 
 
@@ -71,6 +68,7 @@ sock.bind(("localhost", port))
 logging.warning(f"bind to {port}")
 
 data = b''
+
 while True:
     buffer, addr = sock.recvfrom(1024)
     data += buffer
