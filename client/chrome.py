@@ -2,6 +2,9 @@ from selenium import webdriver
 from selenium_stealth import stealth
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 import socket
 import random
 import time
@@ -18,13 +21,15 @@ options.add_argument("--remote-debugging-port=9222")
 # options.add_argument("start-maximized")
 
 port = int(open("socket.txt").readline())
-# options.add_argument(f"user-data-dir=/home/USERNAME/bb-freebet/profile")
+options.add_argument(f"user-data-dir=/home/USERNAME/bb-freebet/profile")
+# options.add_argument(f"user-data-dir=/home/sad1/git/bb-freebet/client/profile")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
 
-chrome_driver_path = "/usr/bin/chrome_driver"
-driver = webdriver.Chrome(options=options, service=Service(
-    executable_path=chrome_driver_path))
+driver = webdriver.Chrome(options=options, service=ChromeService(
+    ChromeDriverManager().install()))
+# driver = webdriver.Chrome(options=options, service=Service(
+#     executable_path=chrome_driver_path))
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
