@@ -6,4 +6,5 @@
 /__pycache__/
 /client/downloads/*
 /venv/
+/client/venv/
 log*.txt
