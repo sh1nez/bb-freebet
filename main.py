@@ -25,8 +25,10 @@ app_id = 21907547
 app_hash = "6f9ce40381033a9d9924430757cf6b07"
 app = Client(name, api_id=app_id, api_hash=app_hash)
 
-channels = ["-1001755139624", "-1001889498592",
-            "-1001810104257", "-1001525747974", "-1001979310355"]
+aunk = ["-1001889498592", "-1001979310355", "-1001810104257"]
+maxBet = ["-1001525747974", "-1001755139624"]
+channels = ["-1001810104257", "-1001525747974",
+            "-1001979310355", "-1001889498592", "-1001755139624"]
 
 name_cnt = 0
 
@@ -144,11 +146,15 @@ async def filter_messages(cli, message: types.Message):
         words = []
         logging.debug(f"text {text}")
         words = re.findall(r'(?!PP)[a-zA-Z0-9*]{5,}', text)
-        logging.debug(f"words {words}")
         logging.debug(f"find {' '.join(words)}")
+
         if any("*" in i for i in words):
-            logging.debug(f"broot with {''.join(hints)}")
-            words = replace(words, hints)
+            if message.chat.id in aunk:
+                logging.debug("aunk promo")
+                words = replace(words, ["WW", "EZ"])
+            else:
+                logging.debug(f"broot with {''.join(hints)}")
+                words = replace(words, hints)
 
         for i in words:
             logging.debug("many_clients")
