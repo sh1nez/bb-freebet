@@ -139,7 +139,7 @@ async def filter_messages(cli, message: types.Message):
         logging.debug("PP broot")
         words = replace(words, hints)
 
-    if len(words) >= 2:
+    elif len(words) >= 2:
         logging.debug("many_promos")
         many_promos(words)
     else:
@@ -151,7 +151,7 @@ async def filter_messages(cli, message: types.Message):
         if any("*" in i for i in words):
             if message.chat.id in aunk:
                 logging.debug("aunk promo")
-                words = replace(words, ["WW", "EZ"])
+                words = replace(words, ["WW"])
             else:
                 logging.debug(f"broot with {''.join(hints)}")
                 words = replace(words, hints)
