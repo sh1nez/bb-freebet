@@ -14,4 +14,3 @@ cp freebet.service /etc/systemd/system/"$user"freebet.service
 systemctl daemon-reload
 
 systemctl enable --now "$user"freebet.service
-
