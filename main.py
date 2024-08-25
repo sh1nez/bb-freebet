@@ -1,9 +1,22 @@
-from pyrogram import Client, filters, types
+from pyrogram import Client, types
 from transcript import to_text
 from stealth import promo
 from datetime import datetime
 import random
 import re
+import logging
+
+logger = logging.getLogger('my_logger')
+
+logging.basicConfig(
+    # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    level=logging.WARNING,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('log.txt'),
+        # logging.StreamHandler()  # Вывод в консоль
+    ]
+)
 
 name = "freebet"
 
@@ -67,5 +80,7 @@ async def filter_messages(cli, message: types.Message):
     for i in words:
         promo(i)
 
-print("start...")
+
+logger.warning("start!")
+
 app.run()
