@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
 user=freebeter
-active_dir=/usr/local/src/freebet
-client_dir="$active_dir"/clients
-server_dir="$active_dir"/server
+active_dir=/home/freebeter/bb-freebet
+client_dir="$active_dir"/profiles
 
-chown -R $user:$user "$active_dir"
+# chown -R $user:$user "$active_dir"
 
 # clients=$(find "$client_dir" -maxdepth 1 -type d)
 mapfile -t clients < <(find "$client_dir" -maxdepth 1 -mindepth 1 -type d)
@@ -24,15 +23,12 @@ while [ $port -le 65535 ] && [ $cnt -lt "$len" ]; do
 done
 #
 # server
-source "$server_dir"/venv/bin/activate
-python "$server_dir"/main.py "${array[@]}" &
-
-deactivate
 source "$active_dir"/venv/bin/activate
+python "$active_dir"/main.py "${array[@]}" &
 
 #clients
 cnt=0
 for i in "${clients[@]}"; do
-	su -c "python3 $i/main.py $i/profile ${array[cnt]}" "$user" &
+	su -c "python3 $active_dir/main.py $i/profile ${array[cnt]}" "$user" &
 	((cnt+=1))
 done
