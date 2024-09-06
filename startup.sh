@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 user=freebeter
-active_dir=/home/freebeter/bb-freebet
+active_dir=/home/"$user"/bb-freebet
 client_dir="$active_dir"/profiles
 
 # chown -R $user:$user "$active_dir"
@@ -24,11 +24,13 @@ done
 #
 # server
 source "$active_dir"/venv/bin/activate
-python "$active_dir"/main.py "${array[@]}" &
+echo "$active_dir"/main.py "${array[@]}"
+python3 "$active_dir"/main.py "${array[@]}" &
 
 #clients
 cnt=0
 for i in "${clients[@]}"; do
-	su -c "python3 $active_dir/main.py $i/profile ${array[cnt]}" "$user" &
+	echo "python3 $active_dir/chrome.py $i ${array[cnt]}"
+	su -c "python3 $active_dir/chrome.py $i ${array[cnt]}" "$user" &
 	((cnt+=1))
 done
