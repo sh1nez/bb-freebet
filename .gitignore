@@ -1,5 +1,5 @@
 /profile/*
-#/profiles/*
+/profiles/*
 *.session
 *.session-journal
 /__pycache__/
