@@ -8,10 +8,15 @@ import time
 import logging
 
 options = webdriver.ChromeOptions()
-# options.add_argument("--headless=new")
-options.add_argument("start-maximized")
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-software-rasterizer")
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--remote-debugging-port=9222")
 
-logger = logging.getLogger('freebet')
+# options.add_argument("start-maximized")
+
 
 chrome_profile_path = sys.argv[1]
 port = int(sys.argv[2])
@@ -19,6 +24,16 @@ options.add_argument(f"user-data-dir={chrome_profile_path}")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
 driver = webdriver.Chrome(options=options)
+
+logging.basicConfig(
+    # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    level=logging.WARNING,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        # logging.StreamHandler()  # Вывод в консоль
+        logging.FileHandler(f'log{chrome_profile_path.split("/")[-1]}.txt'),
+    ]
+)
 
 stealth(driver,
         languages=["en-US", "en"],
@@ -36,7 +51,7 @@ driver.get("https://betboom.ru/actions#online")
 driver.find_element(By.TAG_NAME, "body").send_keys(
     webdriver.common.keys.Keys.END)
 
-logger.warning("start!")
+logging.warning("start!")
 
 
 def promo(code):
@@ -48,16 +63,16 @@ def promo(code):
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("localhost", port))
-logger.warning(f"bind to {port}")
+logging.warning(f"bind to {port}")
 
 data = b''
 while True:
     buffer, addr = sock.recvfrom(1024)
     data += buffer
-    logger.warning(f"accept data: {buffer.decode("utf-8")}")
+    logging.warning(f"accept data: {buffer.decode("utf-8")}")
     if b'<END>' in data:
         messages = data.split(b'<END>')
         for i in messages[:-1]:
-            logger.warning(f"using promo {i.decode()}")
+            logging.warning(f"using promo {i.decode()}")
             promo(i.decode("utf-8"))
         data = messages[-1]
