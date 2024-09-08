@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-user=sad1
-active_dir=/home/"$user"/git/bb-freebet
+user=freebeter
+active_dir=/home/"$user"/bb-freebet
 client_dir="$active_dir"/profiles
 
 rm "$active_dir"/log*.txt
