@@ -17,7 +17,6 @@ options.add_argument("--remote-debugging-port=9222")
 
 # options.add_argument("start-maximized")
 
-
 chrome_profile_path = sys.argv[1]
 port = int(sys.argv[2])
 options.add_argument(f"user-data-dir={chrome_profile_path}")
@@ -56,9 +55,8 @@ logging.warning("start!")
 
 def promo(code):
     driver.find_element(By.ID, 'promocode').send_keys(code)
-    time.sleep(random.randint(2, 8)/10)
+    time.sleep(random.randint(2, 5)/10)
     driver.find_element(By.ID, "buttonpromo").click()
-    time.sleep(random.randint(2, 8)/10)
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
