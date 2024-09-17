@@ -17,9 +17,8 @@ options.add_argument("--remote-debugging-port=9222")
 
 # options.add_argument("start-maximized")
 
-chrome_profile_path = sys.argv[1]
 port = int(open("socket.txt").readline())
-options.add_argument(f"user-data-dir={chrome_profile_path}")
+options.add_argument(f"user-data-dir=/home/USERNAME/bb-freebet/profile")
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
 driver = webdriver.Chrome(options=options)
