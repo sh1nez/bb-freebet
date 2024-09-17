@@ -1,0 +1,14 @@
+[Unit]
+Description=USERNAME's money farmer
+After=network.target
+
+[Service]
+User=USERNAME
+Group=USERNAME
+WorkingDirectory=/home/USERNAME/bb-freebet/
+ExecStart=/usr/bin/bash /home/USERNAME/bb-freebet/startup.sh /home/USERNAME/bb-freebet/profile
+Restart=on-failure
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target
