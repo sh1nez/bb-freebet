@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-active_dir=/user/local/src
+active_dir=/user/local/src/bb-freebet
 
 rm "$active_dir"/log*.txt
 
@@ -22,12 +22,14 @@ done
 source "$active_dir"/venv/bin/activate
 
 for (( i=0; i<len; ++i)); do
-	echo "${array[$i]}" > "${clients[$i]}"/bb-freebet/socket;
+	"${array[$i]}" > "${clients[$i]}"/bb-freebet/socket;
 done
-
-# echo "$active_dir"/main.py "${array[@]}"
-# python3 "$active_dir"/main.py "${array[@]}" &
 
 for dir in /home/*; do
-	echo systemctl restart "$(basename "$dir")freebet.service"
+	systemctl restart "$(basename "$dir")freebet.service"
 done
+
+echo "$active_dir"/main.py "${array[@]}"
+python3 "$active_dir"/main.py "${array[@]}" &
+
+
