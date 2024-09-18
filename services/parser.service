@@ -3,8 +3,8 @@ Description=parser for freebet
 After=network.target
 
 [Service]
-User=USERNAME
-Group=USERNAME
+User=root
+Group=root
 WorkingDirectory=/usr/local/src/bb-freebet
 ExecStart=/usr/bin/bash /usr/local/src/bb-freebet/parser.sh
 Restart=on-failure
