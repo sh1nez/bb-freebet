@@ -9,6 +9,6 @@ sed -i "s/USERNAME/$user/g" clean.sh
 sed -i "s/USERNAME/$user/g" freebet.service
 sed -i "s/USERNAME/$user/g" chrome.py
 
-mv freebet.service /etc/systemd/system/"$user"freebet.service
+cp freebet.service /etc/systemd/system/"$user"freebet.service
 systemctl enable --now "$user"freebet.service
 

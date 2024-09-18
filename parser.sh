@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-active_dir=/user/local/src/bb-freebet
-
-rm "$active_dir"/log*.txt
+active_dir=/usr/local/src/bb-freebet
 
 mapfile -t clients < <(find "/home" -maxdepth 1 -mindepth 1 -type d)
 
@@ -19,10 +17,9 @@ while [ $port -le 65535 ] && [ $cnt -lt "$len" ]; do
 	((port+=1))
 done
 
-source "$active_dir"/venv/bin/activate
 
 for (( i=0; i<len; ++i)); do
-	"${array[$i]}" > "${clients[$i]}"/bb-freebet/socket;
+	echo "${array[$i]}" > "${clients[$i]}"/bb-freebet/socket.txt
 done
 
 for dir in /home/*; do
@@ -30,6 +27,5 @@ for dir in /home/*; do
 done
 
 echo "$active_dir"/main.py "${array[@]}"
-python3 "$active_dir"/main.py "${array[@]}" &
-
-
+source "$active_dir"/venv/bin/activate
+python3 "$active_dir"/main.py "${array[@]}"
