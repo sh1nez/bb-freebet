@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-rm -r ~/.cache/selenium
+if [ -d ~/.cache/selenium ]; then
+	rm -r ~/.cache/selenium
+fi
