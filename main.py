@@ -75,13 +75,15 @@ async def media_to_text(message: types.Message):
 def find_hint(text):
     matches = re.findall(r'"(.*?)"', text)
     if len(matches) == 1:
+        logger.info(f"find hint {matches[0]}")
         return matches[0]
+    return None
 
 
 def replace(words, hint=None):
     new = []
     if hint:
-        for v in enumerate(words):
+        for v in words:
             new.append(re.sub(r'\*+', hint, v))
 
     else:
