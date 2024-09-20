@@ -141,7 +141,7 @@ async def filter_messages(cli, message: types.Message):
     many_promos(words)
 
     words = []
-    words = re.findall(r'\b(?!PP)[a-zA-Z0-9]{5,}\b', text)
+    words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
     if any("*" in i for i in words):
         hint = find_hint(text)
         words = replace(words, hint)
