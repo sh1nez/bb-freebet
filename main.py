@@ -114,9 +114,11 @@ async def filter_messages(cli, message: types.Message):
         words = new
 
         if any("*" in i for i in words):  # if need to replace
+            logger.info("* in message")
             if message.__dict__['caption']:
                 text = message.__dict__['caption']
                 hint = find_hint(text)
+                logger.info(f"{hint} hint")
                 words = replace(words, hint)
         many_promos(words)
 
