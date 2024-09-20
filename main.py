@@ -23,7 +23,7 @@ logging.basicConfig(
 name = "freebet"
 app_id = 21907547
 app_hash = "6f9ce40381033a9d9924430757cf6b07"
-app = Client(name, api_id = app_id, api_hash = app_hash)
+app = Client(name, api_id=app_id, api_hash=app_hash)
 
 channels = ["-1001755139624", "-1001889498592",
             "-1001810104257", "-1001525747974", "-1001979310355"]
@@ -42,7 +42,7 @@ assert clients_len != 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
-def many_clents(promo):
+def many_clients(promo):
     for i in clients:
         send(promo, i)
 
@@ -72,51 +72,73 @@ async def media_to_text(message: types.Message):
         return []
 
 
+def find_hint(text):
+    matches = re.findall(r'"(.*?)"', text)
+    if len(matches) == 1:
+        return matches[0]
+
+
+def replace(words, hint=None):
+    if hint:
+        for i, v in enumerate(words):
+            words[i] = re.sub(r'\*+', hint, v)
+    else:
+        new = []
+        for i in words:
+            if "*" in i:
+                if i.count("*") != 1:
+                    continue
+                else:
+                    for w in string.digits + string.ascii_uppercase:
+                        new.append(i.replace("*", w))
+        words = new
+    return words
+
+
 @app.on_message()
 async def filter_messages(cli, message: types.Message):
     if str(message.chat.id) not in channels:
         return
-    words = []
-    if message.__dict__["media"]:
+
+    if message.__dict__["media"]:  # promi in pic
         words = await media_to_text(message)
+        new = []
+        for i in words:
+            if "PP" in i:
+                inx = i.find("PP")
+                new.append(i[inx:10])
+        words = new
 
-    re_text = None
-    if message.__dict__['text']:
-        words.extend(message.text.split())
-        re_text = message.__dict__['text']
-
-    if message.__dict__['caption']:
-        words.extend(message.caption.split())
-        re_text = message.__dict__['caption']
-
-    new = []
-    for i in words:
-        if "PP" in i:
-            inx = i.find("PP")
-            new.append(i[inx:10])
-    words = new
-    for i in words:
-        if "*" in i:
-            if i.count("*") != 1:
-                continue
-            else:
-                for w in string.digits + string.ascii_uppercase:
-                    words.append(i.replace("*", w))
-
-    if not words:
-        if not re_text:
-            return
-        url_pattern = re.compile(r"https?://\S+")
-        re_text = url_pattern.sub("", re_text)
-        words = re.findall(r'\b[a-zA-Z0-9]{10,}\b', re_text)
-        if words:
-            logger.warning("using promo...")
-            for i in words:
-                many_clents(i)
-        return
-    else:
-        logger.warning("using promo...")
+        if any("*" in i for i in words):  # if need to replace
+            if message.__dict__['caption']:
+                text = message.__dict__['caption']
+                hint = find_hint(text)
+                words = replace(text, hint)
         many_promos(words)
+
+    text = ""
+    if message.__dict__['text']:
+        text += message.text
+    if message.__dict__['caption']:
+        text += message.caption
+
+    url_pattern = re.compile(r"https?://\S+")
+    text = url_pattern.sub("", text)
+    words = re.findall(r'PP.{8}', text)
+
+    if any("*" in i for i in words):
+        hint = find_hint(text)
+        words = replace(words, hint)
+
+    many_promos(words)
+
+    words = []
+    words = re.findall(r'\b[a-zA-Z0-9]{10,}\b', text)
+    if any("*" in i for i in words):
+        hint = find_hint(text)
+        words = replace(words, hint)
+    many_clients(i)
+
 
 logger.warning("start!")
 app.run()
