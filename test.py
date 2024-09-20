@@ -1,6 +1,23 @@
 import re
 import logging
 
+
+def replace(words, hint=None):
+    new = []
+    if hint:
+        for v in words:
+            pattern = r'\*+'
+            new.append(re.sub(r'\*+', hint, v))
+
+    else:
+        for i in words:
+            if "*" in i:
+                if i.count("*") != 1:
+                    continue
+    words = new
+    return words
+
+
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -14,11 +31,7 @@ def find_hint(text):
     return None
 
 
-# Пример использования
-text1 = 'Это "единственное слово".'
-text2 = 'Это "первое слово" и "второе слово".'
-text3 = 'Нет слов в кавычках.'
+words = replace(["wpqerpwe*1", "asdfasd**1"], "T")
 
-print(find_hint(text1))  # Вернет: единственное слово
-print(find_hint(text2))  # Вернет: None
-print(find_hint(text3))  # Вернет: None
+for i in words:
+    print(i)
