@@ -119,7 +119,7 @@ async def filter_messages(cli, message: types.Message):
             if message.__dict__['caption']:
                 text = message.__dict__['caption']
                 hint = find_hint(text)
-                words = replace(text, hint)
+                words = replace(words, hint)
                 logger.info(" ".join(words))
         many_promos(words)
 
