@@ -12,7 +12,7 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.WARNING,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
@@ -99,8 +99,9 @@ def replace(words, hint=None):
 async def filter_messages(cli, message: types.Message):
     if str(message.chat.id) not in channels:
         return
-
+    logger.info("get message")
     if message.__dict__["media"]:  # promi in pic
+        logger.info("image")
         words = await media_to_text(message)
         new = []
         for i in words:
@@ -109,6 +110,8 @@ async def filter_messages(cli, message: types.Message):
                 new.append(i[inx:10])
         words = new
 
+        logger.info(" ".join(words))
+
         if any("*" in i for i in words):  # if need to replace
             if message.__dict__['caption']:
                 text = message.__dict__['caption']
@@ -116,6 +119,7 @@ async def filter_messages(cli, message: types.Message):
                 words = replace(text, hint)
         many_promos(words)
 
+    words = []
     text = ""
     if message.__dict__['text']:
         text += message.text
@@ -126,17 +130,24 @@ async def filter_messages(cli, message: types.Message):
     text = url_pattern.sub("", text)
     words = re.findall(r'PP.{8}', text)
 
+    logger.info("text: ")
+    logger.info("".join(words))
+
     if any("*" in i for i in words):
+        logger.info("* in text")
         hint = find_hint(text)
         words = replace(words, hint)
 
     many_promos(words)
 
     words = []
-    words = re.findall(r'\b[a-zA-Z0-9]{10,}\b', text)
+    words = re.findall(r'\b(?!PP)[a-zA-Z0-9]{5,}\b', text)
     if any("*" in i for i in words):
         hint = find_hint(text)
         words = replace(words, hint)
+
+    logger.info("many-promo")
+    logger.info("".join(words))
 
     for i in words:
         many_clients(i)
