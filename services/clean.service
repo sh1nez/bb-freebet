@@ -3,4 +3,4 @@ Description=Cleanup old files
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash find /usr/local/src/bb-freebet/downloads -type f -mmin +60 -exec rm -f {} \;
+ExecStart=/usr/bin/find /usr/local/src/bb-freebet/downloads -type f -mmin +60 -exec rm -f {} \;
