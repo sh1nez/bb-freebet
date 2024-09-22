@@ -12,7 +12,7 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.INFO,
+    level=logging.WARNING,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
@@ -103,49 +103,42 @@ def replace(words, hint=None):
 async def filter_messages(cli, message: types.Message):
     if str(message.chat.id) not in channels:
         return
-
-    if message.__dict__["media"]:  # promi in pic
-        words = await media_to_text(message)
-        new = []
-        for i in words:
-            if "PP" in i:
-                inx = i.find("PP")
-                new.append(i[inx:10])
-        words = new
-
-        if any("*" in i for i in words):  # if need to replace
-            logger.info("* in message")
-            text = message.__dict__['caption']
-            hint = find_hint(text)
-            logger.info(f"{hint} hint")
-            words = replace(words, hint)
-        many_promos(words)
-
-    words = []
+    media_text = ""
     text = ""
+    words = []
+    if message.__dict__["media"]:  # promi in pic
+        media_text += await media_to_text(message)
+
     if message.__dict__['text']:
         text += message.text
     if message.__dict__['caption']:
         text += message.caption
 
+    hint = find_hint(text)
+
     url_pattern = re.compile(r"https?://\S+")
     text = url_pattern.sub("", text)
+    tag_pattern = re.compile(r'@\w+', text)
+    text = tag_pattern.sub("", text)
+
+    text += media_text
     words = re.findall(r'PP.{8}', text)
 
     if any("*" in i for i in words):
         hint = find_hint(text)
         words = replace(words, hint)
 
-    many_promos(words)
+    if len(words) >= 2:
+        many_promos(words)
+    else:
+        words = []
+        words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
+        if any("*" in i for i in words):
+            hint = find_hint(text)
+            words = replace(words, hint)
 
-    words = []
-    words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
-    if any("*" in i for i in words):
-        hint = find_hint(text)
-        words = replace(words, hint)
-
-    for i in words:
-        many_clients(i)
+        for i in words:
+            many_clients(i)
 
 
 logger.warning("start!")
