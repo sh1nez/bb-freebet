@@ -69,7 +69,7 @@ async def media_to_text(message: types.Message):
         await message.download(name)
         return to_text("downloads/" + name)
     except Exception:
-        return []
+        return ""
 
 
 def find_hint(text):
