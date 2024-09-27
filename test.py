@@ -1,9 +1,22 @@
 import re
+
+
+def find_hints(text):
+    matches = re.findall(r'(?!.*\*)"([A-Z]+)"', text)
+    if len(matches) == 1:
+        return matches
+
+    matches = re.findall(r'\b(?!.*\*)[A-Z]+\b', text)
+
+    if matches:
+        return matches
+
+    return []
+
+
 text = """Вот такую решил дать. Что думаете?
 
 Фриха: ZASPIRIT*** - вставляйте KEKW
 
 Активировать"""
-words = re.findall(r'(?!PP)[a-zA-Z*]{4,}', text)
-
-print(words)
+print(find_hints(text))

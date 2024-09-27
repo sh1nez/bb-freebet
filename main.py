@@ -12,7 +12,7 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
@@ -73,13 +73,13 @@ async def media_to_text(message: types.Message):
 
 
 def find_hints(text):
-    matches = re.findall(r'"([A-Z]+)"', text)
+    matches = re.findall(r'(?!.*\*)"([A-Z]+)"', text)
 
     if len(matches) == 1:
         logger.debug(f"find hint {matches[0]}")
         return matches
 
-    matches = re.findall(r'\b[A-Z]+\b', text)
+    matches = re.findall(r'\b(?!.*\*)[A-Z]+\b', text)
 
     if matches:
         logger.debug(f"find hints {' '.join(matches)}")
