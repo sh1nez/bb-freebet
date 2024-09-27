@@ -72,12 +72,15 @@ async def media_to_text(message: types.Message):
         return ""
 
 
-def find_hint(text):
+def find_hints(text):
     if text:
         matches = re.findall(r'"(.*?)"', text)
         if len(matches) == 1:
             logger.info(f"find hint {matches[0]}")
-            return matches[0]
+            return matches
+        matches = re.findall(r'\b[^* \n]+\b', text)
+        logger.info(f"find hints {matches}")
+        return matches
 
 
 def replace(words, hint=None):
@@ -108,13 +111,12 @@ async def filter_messages(cli, message: types.Message):
     words = []
     if message.__dict__["media"]:  # promi in pic
         media_text += await media_to_text(message)
-
     if message.__dict__['text']:
         text += message.text
     if message.__dict__['caption']:
         text += message.caption
 
-    hint = find_hint(text)
+    hints = find_hints(text)
 
     url_pattern = re.compile(r"https?://\S+")
     text = url_pattern.sub("", text)
@@ -125,7 +127,11 @@ async def filter_messages(cli, message: types.Message):
     words = re.findall(r'PP.{8}', text)
 
     if any("*" in i for i in words):
-        words = replace(words, hint)
+        new = []
+        for i in words:
+            for j in hints:
+                new.append(re.sub(r'\*+', j, i))
+        words = new
 
     if len(words) >= 2:
         many_promos(words)
@@ -133,7 +139,11 @@ async def filter_messages(cli, message: types.Message):
         words = []
         words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
         if any("*" in i for i in words):
-            words = replace(words, hint)
+            new = []
+            for i in words:
+                for j in hints:
+                    new.append(re.sub(r'\*+', j, i))
+            words = new
 
         for i in words:
             many_clients(i)
