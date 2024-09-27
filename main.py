@@ -12,7 +12,7 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.WARNING,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
@@ -140,7 +140,7 @@ async def filter_messages(cli, message: types.Message):
         many_promos(words)
     else:
         words = []
-        words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{5,}\b', text)
+        words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{4,}\b', text)
         if any("*" in i for i in words):
             words = replace(words, hints)
 
