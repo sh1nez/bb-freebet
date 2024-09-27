@@ -82,7 +82,7 @@ def find_hints(text):
     matches = re.findall(r'\b[A-Z]+\b', text)
 
     if matches:
-        logger.info(f"find hint {''.join(matches)}")
+        logger.info(f"find hints {''.join(matches)}")
         return matches
 
     return []
@@ -134,6 +134,7 @@ async def filter_messages(cli, message: types.Message):
     words = re.findall(r'PP.{8}', text)
 
     if any("*" in i for i in words):
+        logging.info("PP broot")
         words = replace(words, hints)
 
     if len(words) >= 2:
@@ -142,6 +143,7 @@ async def filter_messages(cli, message: types.Message):
         words = []
         words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{4,}\b', text)
         if any("*" in i for i in words):
+            logging.info(f"broot with {''.join(hints)}")
             words = replace(words, hints)
 
         for i in words:
