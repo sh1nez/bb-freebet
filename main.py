@@ -142,7 +142,9 @@ async def filter_messages(cli, message: types.Message):
         many_promos(words)
     else:
         words = []
+        logging.debug(f"text {text}")
         words = re.findall(r'\b(?!PP)[a-zA-Z0-9*]{4,}\b', text)
+        logging.debug(f"words {words}")
         logging.debug(f"find {' '.join(words)}")
         if any("*" in i for i in words):
             logging.debug(f"broot with {''.join(hints)}")
