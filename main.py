@@ -25,10 +25,10 @@ app_id = 21907547
 app_hash = "6f9ce40381033a9d9924430757cf6b07"
 app = Client(name, api_id=app_id, api_hash=app_hash)
 
-aunk = ["-1001889498592", "-1001979310355", "-1001810104257"]
-maxBet = ["-1001525747974", "-1001755139624"]
+aunk = ["-1001979310355", "-1001810104257"]
+maxBet = ["-1001525747974",]
 channels = ["-1001810104257", "-1001525747974",
-            "-1001979310355", "-1001889498592", "-1001755139624"]
+            "-1001979310355", "-1001889498592",]
 
 name_cnt = 0
 
@@ -139,7 +139,7 @@ async def filter_messages(cli, message: types.Message):
         logging.debug("PP broot")
         words = replace(words, hints)
 
-    elif len(words) >= 2:
+    if len(words) >= 2:
         logging.debug("many_promos")
         many_promos(words)
     else:
