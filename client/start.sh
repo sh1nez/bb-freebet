@@ -10,6 +10,8 @@ sed -i "s/USERNAME/$user/g" chrome.py
 
 cp freebet.service /etc/systemd/system/"$user"freebet.service
 
+chown -R ${user}:${user} /home/${user}/
+
 systemctl daemon-reload
 
 systemctl enable --now "$user"freebet.service
