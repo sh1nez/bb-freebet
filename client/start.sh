@@ -5,7 +5,6 @@ if [ ! -d venv ]; then
 fi
 venv/bin/pip3 install -r requirements.txt
 
-sed -i "s/USERNAME/$user/g" clean.sh
 sed -i "s/USERNAME/$user/g" freebet.service
 sed -i "s/USERNAME/$user/g" chrome.py
 
