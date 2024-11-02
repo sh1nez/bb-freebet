@@ -12,11 +12,11 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        # logging.StreamHandler()  # Вывод в консоль
-        logging.FileHandler('log.txt'),
+        logging.StreamHandler()  # Вывод в консоль
+        # logging.FileHandler('log.txt'),
     ]
 )
 
@@ -71,7 +71,9 @@ async def media_to_text(message: types.Message):
         if name_cnt > 9:
             name_cnt = 0
         await message.download(name)
-        return to_text("downloads/" + name)
+        a = to_text("downloads/" + name)
+        logger.info(a)
+        return a
     except Exception:
         return ""
 
@@ -135,7 +137,8 @@ async def filter_messages(cli, message: types.Message):
     text = tag_pattern.sub("", text)
 
     text += media_text
-    words = re.findall(r'PP.{8}', text)
+    pp_pattern = re.compile(r'PP.{8}', re.IGNORECASE)
+    words = pp_pattern.findall(text)
 
     if words:  # PP*
         fl = any("*" in i for i in words)
