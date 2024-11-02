@@ -13,6 +13,8 @@ cp services/parser.service /etc/systemd/system/
 cp services/clean.service /etc/systemd/system/
 cp services/clean.timer /etc/systemd/system/
 
+mkdir -p /usr/local/profiles
+
 systemctl daemon-reload
 
 systemctl enable --now parser.service

@@ -26,8 +26,9 @@ app_hash = "6f9ce40381033a9d9924430757cf6b07"
 app = Client(name, api_id=app_id, api_hash=app_hash)
 
 aunk = ["-1001979310355", "-1001810104257"]
-maxBet = ["-1001525747974",]
-channels = ["-1001810104257", "-1001525747974",
+maxBet = ["-1001525747974", "-1001810104257"]
+channels = ["-1001810104257",
+            "-1001525747974",
             "-1001979310355", "-1001889498592",]
 
 name_cnt = 0
@@ -125,7 +126,7 @@ async def filter_messages(cli, message: types.Message):
     if message.__dict__['caption']:
         text += message.caption
 
-    hints = find_hints(text)
+    hints = None
 
     url_pattern = re.compile(r"https?://\S+")
     text = url_pattern.sub("", text)
@@ -137,6 +138,7 @@ async def filter_messages(cli, message: types.Message):
 
     if any("*" in i for i in words):
         logging.debug("PP broot")
+        hints = find_hints(text)
         words = replace(words, hints)
 
     if len(words) >= 2:
@@ -153,6 +155,8 @@ async def filter_messages(cli, message: types.Message):
                 logging.debug("aunk promo")
                 words = replace(words, ["WW"])
             else:
+                if not hints:
+                    hints = find_hints(text)
                 logging.debug(f"broot with {''.join(hints)}")
                 words = replace(words, hints)
 
