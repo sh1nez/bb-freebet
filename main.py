@@ -12,7 +12,7 @@ logger = logging.getLogger('freebet')
 
 logging.basicConfig(
     # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # logging.StreamHandler()  # Вывод в консоль
@@ -25,11 +25,11 @@ app_id = 21907547
 app_hash = "6f9ce40381033a9d9924430757cf6b07"
 app = Client(name, api_id=app_id, api_hash=app_hash)
 
-aunk = ["-1001979310355", "-1001810104257"]
-maxBet = ["-1001525747974", "-1001810104257"]
-channels = ["-1001810104257",
-            "-1001525747974",
-            "-1001979310355", "-1001889498592",]
+aunk = [-1001979310355, -1001810104257]
+maxBet = [-1001525747974, -1001810104257]
+channels = [-1001810104257,
+            -1001525747974,
+            -1001979310355, -1001889498592,]
 
 name_cnt = 0
 
@@ -45,13 +45,14 @@ assert clients_len != 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
-def many_clients(promo):
+def many_clients(promos):
     for i in clients:
-        send(promo, i)
+        for p in promos:
+            send(p, i)
 
 
 def send(promo, client):
-    logger.warning(f"send promi {promo} to {client[1]}")
+    logger.info(f"send promi {promo} to {client[1]}")
     promo += "<END>"
     sock.sendto(promo.encode("utf-8"), client)
 
@@ -92,7 +93,7 @@ def find_hints(text):
 
 
 def replace(words, hints=None):
-    logger.info(f"replace start: {''.join(words)}")
+    logger.info(f"replace start: {' '.join(words)}")
     new = []
     if hints:
         for w in words:
@@ -107,26 +108,26 @@ def replace(words, hints=None):
                     for w in string.digits + string.ascii_uppercase:
                         new.append(h.replace("*", w))
 
-    logger.info(f"replace end: {''.join(new)}")
+    logger.info(f"replace end: {' '.join(new)}")
     return new
 
 
 @app.on_message()
 async def filter_messages(cli, message: types.Message):
-    if str(message.chat.id) not in channels:
+    if message.chat.id not in channels:
         return
     media_text = ""
     text = ""
     words = []
+
     if message.__dict__["media"]:  # promi in pic
         media_text += await media_to_text(message)
 
     if message.__dict__['text']:
         text += message.text
+
     if message.__dict__['caption']:
         text += message.caption
-
-    hints = None
 
     url_pattern = re.compile(r"https?://\S+")
     text = url_pattern.sub("", text)
@@ -136,33 +137,37 @@ async def filter_messages(cli, message: types.Message):
     text += media_text
     words = re.findall(r'PP.{8}', text)
 
-    if any("*" in i for i in words):
-        logging.debug("PP broot")
-        hints = find_hints(text)
-        words = replace(words, hints)
-
-    if len(words) >= 2:
-        logging.debug("many_promos")
-        many_promos(words)
-    else:
-        words = []
-        logging.debug(f"text {text}")
-        words = re.findall(r'(?!PP)[a-zA-Z0-9*]{5,}', text)
-        logging.debug(f"find {' '.join(words)}")
-
-        if any("*" in i for i in words):
-            if message.chat.id in aunk:
-                logging.debug("aunk promo")
-                words = replace(words, ["WW"])
+    if words:  # PP*
+        fl = any("*" in i for i in words)
+        if message.chat.id in aunk:
+            logger.debug("aunk PP")
+            if fl:
+                many_clients(replace(words, ["WW"]))
             else:
-                if not hints:
-                    hints = find_hints(text)
-                logging.debug(f"broot with {''.join(hints)}")
-                words = replace(words, hints)
-
-        for i in words:
-            logging.debug("many_clients")
-            many_clients(i)
+                many_promos(words)
+        else:  # max
+            logger.debug("max PP")
+            if fl:
+                hints = find_hints(text)
+                many_clients(replace(words, hints))
+            many_promos(words)
+    else:  # if not PP*
+        words = re.findall(r'(?!PP)[a-zA-Z0-9*]{5,}', text)
+        fl = any("*" in i for i in words)
+        if message.chat.id in aunk:
+            logger.debug("aunk !PP")
+            if fl:
+                tmp = [i for i in words if "*" in i]
+                many_clients(replace(words, ["WW"]))
+            else:
+                many_promos(words)
+        else:
+            logger.debug(f"max !PP{message.chat.id}")
+            if fl:
+                hints = find_hints(text)
+                # tmp = [i for i in words if "*" in i]
+                many_clients(replace(words, hints))
+            many_promos(words)
 
 
 logger.warning("start!")

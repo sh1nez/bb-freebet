@@ -62,7 +62,7 @@ logging.warning("start!")
 
 def promo(code):
     driver.find_element(By.ID, 'promocode').send_keys(code)
-    time.sleep(random.randint(2, 5)/10)
+    time.sleep(random.randint(20, 35)/100)
     driver.find_element(By.ID, "buttonpromo").click()
 
 
