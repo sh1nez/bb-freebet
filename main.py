@@ -125,6 +125,7 @@ def replace(words, hints=None):
 async def filter_messages(cli, message: types.Message):
     if message.chat.id not in channels:
         return
+
     text = ""
     words = []
 
